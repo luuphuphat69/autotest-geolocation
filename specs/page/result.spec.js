@@ -4,11 +4,11 @@ import { ResultPage } from '../../model/ResultPage';
 const RESULT_BASE_URL = `https://www.geolocation.space/result`;
 const listCities = ['Pleiku', 'New York', 'Ohio'];
 const dropdownOptions = [
-  'Country',
-  'City',
-  'State / Province',
-  'Latitude',
-  'Longitude'
+  { id: "city", label: "City" },
+  { id: "state", label: "State / Province" },
+  { id: "country", label: "Country" },
+  { id: "latitude", label: "Latitude" },
+  { id: "longitude", label: "Longitude" },
 ];
 const filterValues = ['abcdf', '34324', '!@$#%^&*'];
 
@@ -17,35 +17,74 @@ test('has title', async ({ page }) => {
 });
 
 // Parameterized dropdown filter tests
-test.describe("Filter dropdown", () => {
+test.describe("Apply filter", () => {
   for (const city of listCities) {
     for (const option of dropdownOptions) {
-      test(`select [${option}] filter dropdown for city: ${city}`, async ({ page }) => {
-        const resultPage = new ResultPage(page);
-        await resultPage.goToResultPage(city);
+      for (const value of filterValues) {
+        test(
+          `apply filter [${option.id}] with value "${value}" for city "${city}"`,
+          async ({ page }) => {
+            const resultPage = new ResultPage(page);
+            await resultPage.goToResultPage(city);
 
-        await resultPage.selectFilterDropDownOption(option);
+            // Select dropdown option
+            await resultPage.selectFilterDropDownOption(option.label);
 
-        const content = await resultPage.filterdropdown.textContent();
-        expect(content).toContain(option);
-      });
+            // Input filter value
+            await resultPage.inputFilterValue(value);
+
+            // Apply filter
+            await resultPage.applyFilter();
+
+            // Expect label
+            await expect(resultPage.filterTagLabel).toHaveText(option.id + ":");
+
+            // Expect value
+            await expect(resultPage.filterTagValue).toHaveText(value);
+          }
+        );
+      }
     }
   }
-})
+});
 
+test.describe('Remove filter', () => {
+  for (const option of dropdownOptions) {
+    test(`remove ${option.label} filter`, async ({ page }) => {
+      const resultPage = new ResultPage(page);
 
-test.describe("Filter input", () => {
-  for (const city of listCities) {
-    test.describe(`Filter input for city: ${city}`, () => {
-      test('Input chars + number + special', async ({ page }) => {
-        const resultPage = new ResultPage(page);
-        await resultPage.goToResultPage(city);
+      await resultPage.goToResultPage(listCities[1]);
 
-        for (const value of filterValues) {
-          await resultPage.inputFilterValue(value);
-          await expect(resultPage.filterInput).toHaveValue(value);
-        }
-      });
+      await resultPage.selectFilterDropDownOption(option.label);
+      await resultPage.inputFilterValue(filterValues[0]);
+      await resultPage.applyFilter();
+
+      await resultPage.removeFilter();
+
+      // Wait for table to show all rows again
+      await expect(page.locator("table tbody tr")).toHaveCount(20);
+
+      await expect(resultPage.filterTagLabel).not.toBeVisible();
+      await expect(resultPage.filterTagValue).not.toBeVisible();
     });
   }
-})
+});
+
+test('Reset all', async ({ page }) => {
+  const resultPage = new ResultPage(page);
+
+  // Go to result page
+  await resultPage.goToResultPage(listCities[1]);
+
+  for (const option of dropdownOptions) {
+    await resultPage.selectFilterDropDownOption(option.label);
+    await resultPage.inputFilterValue(filterValues[0]);
+    await resultPage.applyFilter();
+  }
+
+  await resultPage.resetAllFilter();
+
+  await expect(resultPage.filterTagLabel).not.toBeVisible();
+  await expect(resultPage.filterTagValue).not.toBeVisible();
+  await expect(resultPage.filterInput).toBeEmpty();
+});

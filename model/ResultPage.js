@@ -2,10 +2,14 @@ export class ResultPage {
     RESULT_BASE_URL = 'https://www.geolocation.space/result';
     constructor(page) {
         this.page = page;
+        this.table = page.locator(".city-table");
         this.filterdropdown = page.locator(".filter-select");
         this.filterInput = page.getByPlaceholder("Filter value...");
         this.applyfilterButton = page.locator(".filter-button");
-        this.resetfilterButton = page.locator(".reset-button");
+        this.removefilterButton = page.locator(".remove-filter");
+        this.filterTagLabel = page.locator(".filter-tag-label");
+        this.filterTagValue = page.locator(".filter-tag-value");
+        this.resetAllFilterButton = page.locator(".reset-button")
     }
 
     async goToResultPage(searchTerm) {
@@ -24,7 +28,11 @@ export class ResultPage {
         await this.applyfilterButton.click();
     }
 
-    async resetFilter() {
-        await this.resetFilter.click();
+    async removeFilter() {
+        await this.removefilterButton.click();
+    }
+
+    async resetAllFilter() {
+        await this.resetAllFilterButton.click();
     }
 }
