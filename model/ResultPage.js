@@ -9,7 +9,7 @@ export class ResultPage {
         this.removefilterButton = page.locator(".remove-filter");
         this.filterTagLabel = page.locator(".filter-tag-label");
         this.filterTagValue = page.locator(".filter-tag-value");
-        this.resetAllFilterButton = page.locator(".reset-button")
+        this.resetAllFilterButton = page.locator(".reset-button");
     }
 
     async goToResultPage(searchTerm) {
