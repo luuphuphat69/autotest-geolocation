@@ -1,22 +1,14 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
-import { SearchPage } from '../../model/SearchPage';
+import { SearchPage } from '../../../../model/SearchPage';
+import { testCities } from '../data';
 
-
-test('has title', async ({ page }) => {
-  const searchPage = new SearchPage(page);
-  await searchPage.goToSearchPage();
-  await searchPage.expectTitleContains(expect, 'Geolocation');
-});
-
-test.describe("Search suggestion", () => {
+test.describe("Search with suggestion", () => {
   test('search with suggestion - different cities', async ({ page }) => {
     const searchPage = new SearchPage(page);
     await searchPage.goToSearchPage();
 
     await expect(searchPage.searchInput).toBeVisible();
-
-    const testCities = ["Pleiku", "Ho Chi Minh", "Đà Nẵng"];
 
     for (const city of testCities) {
       await searchPage.clearSearchBar();
@@ -34,11 +26,12 @@ test.describe("Search suggestion", () => {
 
   test('search with suggestion - autocomplete disappears when cleared', async ({ page }) => {
     const searchPage = new SearchPage(page);
-    await searchPage.goToSearchPage();
+    const city = testCities[1];
 
+    await searchPage.goToSearchPage();
     await expect(searchPage.searchInput).toBeVisible();
 
-    await searchPage.fillInSearchBar("Pleiku");
+    await searchPage.fillInSearchBar(city);
     await searchPage.waitForAutocompleteVisible({ timeout: 10000 });
 
     await searchPage.clearSearchBar();
@@ -47,11 +40,11 @@ test.describe("Search suggestion", () => {
 
   test('search with suggestion - click on suggestion', async ({ page }) => {
     const searchPage = new SearchPage(page);
-    await searchPage.goToSearchPage();
+    const city = testCities[1];
 
+    await searchPage.goToSearchPage();
     await expect(searchPage.searchInput).toBeVisible();
 
-    let city = "Pleiku";
     await searchPage.fillInSearchBar(city);
     await searchPage.waitForAutocompleteVisible({ timeout: 10000 });
 
@@ -59,3 +52,31 @@ test.describe("Search suggestion", () => {
     await searchPage.expectUrlEquals(expect, `https://www.geolocation.space/result?city=${city}`);
   });
 });
+
+test.describe("Search without suggestion", () => {
+  test("Search with button", async ({ page }) => {
+    const searchPage = new SearchPage(page);
+    const city = testCities[1];
+
+    searchPage.goToSearchPage();
+    await expect(searchPage.searchInput).toBeVisible();
+
+    await searchPage.fillInSearchBar(city);
+    await searchPage.submitSearch();
+
+    await searchPage.expectUrlEquals(expect, `https://www.geolocation.space/result?city=${city}`);    
+  });
+
+  test("Search with key Enter", async ({page}) => {
+    const searchPage = new SearchPage(page);
+    const city = testCities[1];
+
+    searchPage.goToSearchPage();
+    await expect(searchPage.searchInput).toBeVisible();
+
+    await searchPage.fillInSearchBar(city);
+    await page.keyboard.press("Enter");
+
+    await searchPage.expectUrlEquals(expect, `https://www.geolocation.space/result?city=${city}`);  
+  })
+})

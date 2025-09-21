@@ -1,0 +1,1 @@
+export const testCities = ["Pleiku", "Ho Chi Minh", "Đà Nẵng"];

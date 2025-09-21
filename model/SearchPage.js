@@ -17,6 +17,10 @@ export class SearchPage {
         await this.searchInput.fill(term);
     }
 
+    async submitSearch(){
+        await this.searchButton.click()
+    }
+    
     async clearSearchBar() {
         await this.searchInput.clear();
     }
