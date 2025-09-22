@@ -40,7 +40,7 @@ test.describe("Search with suggestion", () => {
 
   test('search with suggestion - click on suggestion', async ({ page }) => {
     const searchPage = new SearchPage(page);
-    const city = testCities[1];
+    const city = testCities[0];
 
     await searchPage.goToSearchPage();
     await expect(searchPage.searchInput).toBeVisible();
