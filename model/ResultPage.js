@@ -2,7 +2,6 @@ export class ResultPage {
     RESULT_BASE_URL = 'https://www.geolocation.space/result';
     constructor(page) {
         this.page = page;
-        this.table = page.locator(".city-table");
         this.filterdropdown = page.locator(".filter-select");
         this.filterInput = page.getByPlaceholder("Filter value...");
         this.applyfilterButton = page.locator(".filter-button");
