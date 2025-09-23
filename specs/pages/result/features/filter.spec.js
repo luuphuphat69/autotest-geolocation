@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { ResultPage } from "../../../../model/ResultPage";
-import { listCities, dropdownOptions, filterValues } from "../data";
+import { listCities, dropdownOptions, filterValues } from "../../../../testdata/result-data";
 
 test.describe("apply filter", () => {
   for (const city of listCities) {

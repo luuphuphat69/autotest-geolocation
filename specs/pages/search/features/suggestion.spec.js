@@ -1,7 +1,7 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 import { SearchPage } from '../../../../model/SearchPage';
-import { testCities } from '../data';
+import { testCities } from '../../../../testdata/search-data';
 
 test.describe("Search with suggestion", () => {
   test('search with suggestion - different cities', async ({ page }) => {

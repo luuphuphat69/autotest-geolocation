@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { ResultPage } from "../../../../model/ResultPage";
-import { listCities, columnsList } from "../data";
+import { listCities, columnsList } from "../../../../testdata/result-data";
 
 test.describe('sorting column', () => {
   for (const item of columnsList) {
