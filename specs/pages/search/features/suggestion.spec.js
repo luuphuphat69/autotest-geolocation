@@ -58,7 +58,7 @@ test.describe("Search without suggestion", () => {
     const searchPage = new SearchPage(page);
     const city = testCities[1];
 
-    searchPage.goToSearchPage();
+    await searchPage.goToSearchPage();
     await expect(searchPage.searchInput).toBeVisible();
 
     await searchPage.fillInSearchBar(city);
@@ -71,7 +71,7 @@ test.describe("Search without suggestion", () => {
     const searchPage = new SearchPage(page);
     const city = testCities[1];
 
-    searchPage.goToSearchPage();
+    await searchPage.goToSearchPage();
     await expect(searchPage.searchInput).toBeVisible();
 
     await searchPage.fillInSearchBar(city);
